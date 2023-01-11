@@ -1,0 +1,54 @@
+<html>
+
+<head>
+    <script src="./index.js"></script>
+    <style>
+        .todo-list {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .item {
+            width: 200px;
+            height: 40px;
+            display: flex;
+
+            border: 1px solid #7A7A7A;
+            border-radius: 5px;
+
+            -webkit-user-select: none;
+            /* Safari */
+            -ms-user-select: none;
+            /* IE 10 and IE 11 */
+            user-select: none;
+            /* Standard syntax */
+        }
+
+        .item>.title {
+            padding-top: 5px;
+            padding-left: 5px;
+            flex: 1;
+        }
+
+        .item>.remove {
+            width: 10px;
+            background-color: #FBB;
+            transition: 0.1s;
+        }
+
+        .item>.remove:hover {
+            background-color: #F11;
+        }
+    </style>
+</head>
+
+<body>
+    <input id="input-title" />
+    <input class="button" type="button" value="create" onclick="onClickCreateButton();" />
+    <div class='todo-list'>
+    </div>
+</body>
+
+</html>
