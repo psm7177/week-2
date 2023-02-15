@@ -1,11 +1,26 @@
 //index.js
+
+const url = 'http://10.150.36.227:8000';
+
 function onClickCreateButton() {
     const titleInputElement = document.querySelector('#input-title');
-    const todoListElement = document.querySelector('.todo-list');
+    const listElement = document.querySelector('.todo-list');
 
-    const item = createTodoItem(titleInputElement.value);
+    const data = {
+        title: titleInputElement.value
+    };
 
-    todoListElement.appendChild(item);
+    fetch(`${url}/todo`, {
+        method: 'post',
+        mode: 'cors',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    }).then((res) => res.json()).then((res) => {
+        const { id, title, primary } = res;
+        listElement.appendChild(createTodoItem(id, title, primary))
+    });
 }
 
 function createTodoItem(id, title, primary) {
@@ -29,24 +44,47 @@ function createTodoItem(id, title, primary) {
         primary: primary
     };
     removeElement.addEventListener('click', function () {
-        item.remove();
-        delete properties;
+        fetch(`${url}/todo/${item.id}`, {
+            method: 'delete',
+            mode: 'cors',
+        }).then(() => {
+            item.remove();
+            delete properties;
+        });
+        
     });
 
 
     item.addEventListener('click', function () {
         properties.primary = !!!properties.primary;
 
-        if (properties.primary) {
-            item.style.backgroundColor = '#ffffcc';
-        } else {
-            item.style.backgroundColor = '#FFF';
-        }
+        fetch(`${url}/todo/${item.id}`, {
+            method: 'put',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                primary: properties.primary
+            })
+        }).then(() => {
+            if (properties.primary) {
+                item.style.backgroundColor = '#ffffcc';
+            } else {
+                item.style.backgroundColor = '#FFF';
+            }
+        });
     });
 
+    if (properties.primary) {
+        item.style.backgroundColor = '#ffffcc';
+    } else {
+        item.style.backgroundColor = '#FFF';
+    }
+    
     return item;
 }
-const url = 'http://10.150.36.227:8000';
+
 
 function fetchTodo() {
     const listElement = document.querySelector('.todo-list');
@@ -54,13 +92,12 @@ function fetchTodo() {
         mode: 'cors'
     }).then((res) => res.json()).then((res) => {
         const { todos } = res;
-        for(let i = 0; i < todos.length; i++){
+        for (let i = 0; i < todos.length; i++) {
             const todo = todos[i];
             listElement.appendChild(createTodoItem(todo.id, todo.title, todo.primary))
         }
     });
 }
-
 
 // {
 //     method: 'POST', // *GET, POST, PUT, DELETE, etc.
